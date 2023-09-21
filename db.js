@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
         required: true,
     },
     regNo: {
-        type: Number,
+        type: String,
         required: true,
     },
     dept: {
@@ -24,6 +24,14 @@ const schema = new mongoose.Schema({
     },
     events:{
         type: [String],
+        required: true,
+    },
+    year:{
+        type: Number,
+        required: true,
+    },
+    mobileNo:{
+        type: Number,
         required: true,
     }
 })
