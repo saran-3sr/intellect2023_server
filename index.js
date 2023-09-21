@@ -88,6 +88,21 @@ app.post('/createAdmin',async (req,res)=>{
 
 })
 
+app.post('/filter',(req,res)=>{
+    const {searchValue,searchField} = req.body;
+    
+    const query = {};
+    query[searchField] = searchValue
+    db.find(query).then(data=>{
+        res.json(data);
+    })
+    
+    /*
+    db.find({searchField:searchValue}).then((data)=>{
+        console.log(data);res.json(data);
+    }).catch(err=>console.log(err))
+    */
+})
 
 app.get('/data',(req,res)=>{
     db.find({}).then((data)=>{
