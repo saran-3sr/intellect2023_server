@@ -96,13 +96,18 @@ app.post('/filter',(req,res)=>{
     db.find(query).then(data=>{
         res.json(data);
     })
-    
-    /*
-    db.find({searchField:searchValue}).then((data)=>{
-        console.log(data);res.json(data);
-    }).catch(err=>console.log(err))
-    */
 })
+
+app.post('/eventFilter',(req,res)=>{
+    const {eventValue} = req.body;
+    
+    const query = {};
+    query['events'] = eventValue
+    db.find(query).then(data=>{
+        res.json(data);
+    })
+})
+
 
 app.get('/data',(req,res)=>{
     db.find({}).then((data)=>{
