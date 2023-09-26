@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const db = require('./db.js');
 const admin = require('./admin.js');
 const requireAuth = require("./middleware/requireAuth.js");
+const path = require('path');
 
 
 require('dotenv').config();
@@ -17,7 +18,11 @@ app.use(cors({origin:'*'}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:false}));
 
+app.use(express.static(path.join(__dirname, 'build')));
 
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 const createToken = (_id)=>{
     return jwt.sign({_id}, process.env.JWT_SECRET, {expiresIn:'1d'})
@@ -79,7 +84,7 @@ app.post('/adminSignin', async (req,res)=>{
     }
 })
 
-app.use(requireAuth);
+//app.use(requireAuth);
 
 app.post('/createAdmin',async (req,res)=>{
     const {email,password,userName} = req.body;
