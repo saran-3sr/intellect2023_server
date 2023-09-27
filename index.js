@@ -18,11 +18,13 @@ app.use(cors({origin:'*'}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:false}));
 
+
+
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });   
 
 const createToken = (_id)=>{
     return jwt.sign({_id}, process.env.JWT_SECRET, {expiresIn:'1d'})
@@ -82,9 +84,10 @@ app.post('/adminSignin', async (req,res)=>{
     catch(err){
         console.log(err)
     }
+    app.use(requireAuth);
 })
 
-app.use(requireAuth);
+
 
 app.post('/createAdmin',async (req,res)=>{
     const {email,password,userName} = req.body;
@@ -132,6 +135,9 @@ app.delete('/data',(req,res)=>{
         .catch(err=>console.log(err))
 })
 
+  app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/build/index.html'));
+  });
 app.listen(process.env.PORT,()=>{
     console.log("Server is running..")
 });
