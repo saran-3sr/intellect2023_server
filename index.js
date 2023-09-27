@@ -84,7 +84,7 @@ app.post('/adminSignin', async (req,res)=>{
     }
 })
 
-//app.use(requireAuth);
+app.use(requireAuth);
 
 app.post('/createAdmin',async (req,res)=>{
     const {email,password,userName} = req.body;
