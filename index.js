@@ -33,11 +33,9 @@ const createToken = (_id)=>{
 app.post('/register',async (req,res)=>{
 
     const {email,userName,regNo,dept,event, year, mobileNo} = req.body;
-    console.log({email,userName,regNo,dept,event, year, mobileNo});
     
     db.findOne({email}).then((exist)=>{
         if( exist ){
-            console.log('email exists')
          
             db.updateOne({email},{$push:{events:event}})
                 .then(()=>res.json({msg:'Email event Updated'}))
@@ -45,11 +43,12 @@ app.post('/register',async (req,res)=>{
 
         }
         else{
-            console.log('New email')
-            db.create({ email,userName,regNo,dept,year,mobileNo })
-            db.updateOne({email},{$push:{events:event}})
-                .then(()=>res.json({msg:'New email added'}))
-                .then(()=>console.log('Saved and Updated the event'))
+            db.create({ email,userName,regNo,dept,year,mobileNo }).then(()=>{
+                db.updateOne({email},{$push:{events:event}})
+                    .then((msg)=>{res.json({msg:'New email added'})})
+                    .then(()=>console.log('Saved and Updated the event'))
+            })
+
         }
     })
 })
