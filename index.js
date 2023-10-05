@@ -34,7 +34,7 @@ app.post('/register',async (req,res)=>{
 
     const {email,userName,regNo,dept,event, year, mobileNo} = req.body;
     
-    db.findOne({email}).then((exist)=>{
+    db.findOne({regNo}).then((exist)=>{
         if( exist ){         
             db.updateOne({regNo},{$push:{events:event}})
                 .then(()=>res.json({msg:'Email event Updated'}))
@@ -136,6 +136,6 @@ app.delete('/data',(req,res)=>{
   app.get('*', (req,res) =>{
     res.sendFile(path.join(__dirname+'/build/index.html'));
   });
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT, process.env.HOST, ()=>{
     console.log("Server is running..")
 });
