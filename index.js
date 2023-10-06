@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const db = require('./db.js');
 const admin = require('./admin.js');
-const requireAuth = require("./middleware/requireAuth.js");
+//const requireAuth = require("./middleware/requireAuth.js");
 const path = require('path');
 
 
@@ -77,7 +77,7 @@ app.post('/adminSignin', async (req,res)=>{
 })
 
 
-app.use(requireAuth);
+//app.use(requireAuth);
 
 app.post('/createAdmin',async (req,res)=>{
     const {email,password,userName} = req.body;
