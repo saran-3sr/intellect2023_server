@@ -34,21 +34,18 @@ app.post('/register',async (req,res)=>{
 
     const {email,userName,regNo,dept,event, year, mobileNo} = req.body;
     
-    db.findOne({email}).then((exist)=>{
-        if( exist ){
-         
-            db.updateOne({email},{$push:{events:event}})
+    db.findOne({regNo}).then((exist)=>{
+        if( exist ){         
+            db.updateOne({regNo},{$push:{events:event}})
                 .then(()=>res.json({msg:'Email event Updated'}))
                 .catch(err=>console.log(err));    
-
         }
         else{
             db.create({ email,userName,regNo,dept,year,mobileNo }).then(()=>{
-                db.updateOne({email},{$push:{events:event}})
+                db.updateOne({regNo},{$push:{events:event}})
                     .then((msg)=>{res.json({msg:'New email added'})})
                     .then(()=>console.log('Saved and Updated the event'))
             })
-
         }
     })
 })
@@ -62,31 +59,25 @@ app.post('/adminSignin', async (req,res)=>{
 
         if(!doc)res.json({msg:'Invalid email'})
         if(!email || !password)res.json({msg:"Please fill every fields"})
-
-        bcrypt.compare(password, doc.password, function(err, match) {
-            if (err){
-              console.log('err occured\n',err)
-            }
-            if (match) {
-                if(email && password){
-                    if(match){
-                        const token = createToken(doc._id);
-                        res.json({email,token,msg:'success'})                        
-                    }
-                    else{
-                        res.json({msg:'Wrong Password'})
-                    }
-                }
-            }
-          });        
+		if(email && password){				
+			bcrypt.compare(password, doc.password, function(err, match) {
+				if (match) {
+					const token = createToken(doc._id);
+					res.json({email,token,msg:'success'})                        
+				}
+				else{
+					res.json({msg:'Wrong Password'})
+				}
+			  })				
+		}
     }
     catch(err){
         console.log(err)
     }
-    app.use(requireAuth);
 })
 
 
+app.use(requireAuth);
 
 app.post('/createAdmin',async (req,res)=>{
     const {email,password,userName} = req.body;
@@ -102,17 +93,25 @@ app.post('/filter',(req,res)=>{
     const {searchValue,searchField} = req.body;
     
     const query = {};
-    query[searchField] = searchValue
-    db.find(query).then(data=>{
-        res.json(data);
-    })
+    if(searchField=='year'){
+        db.find({year:searchValue})
+            .then(data=>{
+                res.json(data);
+            })
+    }
+    else{
+        query[searchField] = {$regex:`${searchValue}`,$options:'i'}
+        db.find(query).then(data=>{
+            res.json(data);
+        })
+    }
 })
 
 app.post('/eventFilter',(req,res)=>{
     const {eventValue} = req.body;
     
     const query = {};
-    query['events'] = eventValue
+    query['events'] = {$regex:`^${eventValue}`,$options:'i'}
     db.find(query).then(data=>{
         res.json(data);
     })
@@ -137,6 +136,6 @@ app.delete('/data',(req,res)=>{
   app.get('*', (req,res) =>{
     res.sendFile(path.join(__dirname+'/build/index.html'));
   });
-app.listen(process.env.PORT,()=>{
+app.listen(process.env.PORT, process.env.HOST, ()=>{
     console.log("Server is running..")
 });
